@@ -23,7 +23,7 @@ docker build --progress=plain -t namd3 -f Dockerfile .
 ```
 docker save namd3 -o namd3.tar
 
-singularity build namd3.sif dcker-archive://namd3.tar
+singularity build namd3.sif docker-archive://namd3.tar
 
 ```
 
