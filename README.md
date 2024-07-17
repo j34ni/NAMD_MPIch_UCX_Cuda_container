@@ -1,6 +1,6 @@
 # NAMD_MPIch_UCX_Cuda_container
 
-
+NAMD stands for Nanoscale Molecular Dynamics, it is a high-performance simulation software designed for the simulation of large biomolecular systems, originaly developed by the Theoretical and Computational Biophysics Group at the University of Illinois at Urbana-Champaign, it is widely used in the fields of computational chemistry and molecular biology (https://www.ks.uiuc.edu/Research/namd).
 
 ## Description
 
