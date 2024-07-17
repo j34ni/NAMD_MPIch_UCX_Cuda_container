@@ -7,6 +7,8 @@ FROM quay.io/jeani/base_ubuntu_mpich_ucx_cuda:latest
 # This is a definition file to build NAMD 3.0 using a base container image with Ubuntu22.04 and MPIch4.2.1 (including support for UCX1.17.0 and Cuda12.1.0)
 # It is the responsibility of the user to accept the End User License Agreement and download locally NAMD_3.0_Source.tar.gz (in the same folder as this file)
 #
+# MPI version
+#    ./config Linux-x86_64-g++ --charm-arch mpi-linux-x86_64
 
 # Copying from user local download of NAMD_3.0_Source.tar.gz (requires accepting EULA)
 COPY ./NAMD_3.0_Source.tar.gz /opt/uio/NAMD_3.0_Source.tar.gz
