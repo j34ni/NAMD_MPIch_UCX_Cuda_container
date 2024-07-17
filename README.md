@@ -4,11 +4,11 @@
 
 ## Description
 
-Definition file to build NAMD using a base Ubuntu image with MPIch supporting UCX and Cuda with the **mpi-linux-x86_64** option
+Definition file to build NAMD using a base Ubuntu image with MPIch supporting UCX and Cuda with the **mpi-linux-x86_64** option (Dockerfile_MPI) and with **multicore-linux-x86_64 --with-single-node-cuda** option (Dockerfile_cuda)
 
 **Warning: this repository does not include the NAMD application itself**
 
-The user has to obtain the source code `NAMD_3.0_Source.tar.gz` from https://www.ks.uiuc.edu/Development/Download/download.cgi?PackageName=NAMD and put it in the same directory as the Dockerfile
+The user has to obtain the source code `NAMD_3.0_Source.tar.gz` from https://www.ks.uiuc.edu/Development/Download/download.cgi?PackageName=NAMD and put it in the same directory as the Dockerfile of his/her choice
 
 ## Build
 
