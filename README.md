@@ -75,3 +75,12 @@ cd /scratch/project_xxxxxxxxx/NAMD3
 
 singularity exec --rocm --bind ./apoa1:/apoa1,./tmp:/usr/tmp $IMAGE namd3 +p ${namd_threads} +devices 0,1 /apoa1/apoa1.namd > apoa1_${namd_threads}xthreads_2xgpus.out
 ```
+
+
+# Citation
+
+If you use this container recipes and/or related material please kindly cite:
+
+Iaquinta, J. (2024). j34ni/NAMD_MPIch_UCX_Cuda_container: Version 1.0.0 (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.13303469
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13303469.svg)](https://doi.org/10.5281/zenodo.13303469)
