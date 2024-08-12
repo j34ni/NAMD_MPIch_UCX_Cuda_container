@@ -1,0 +1,63 @@
+Bootstrap: docker
+From: rocm/dev-ubuntu-22.04:6.1.2-complete
+
+# Authors Jean Iaquinta
+# Contact jeani@uio.no
+# Version v1.0.0
+#
+# This is a definition file to build NAMD 3.0 using a rocm/dev-ubuntu-22.04 base container image 
+# It is the responsibility of the user to accept the End User License Agreement and download locally NAMD_3.0_Source.tar.gz
+
+# Update system and install packages needed for NAMD
+%post
+    apt-get update -y 
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends autoconf automake ca-certificates cmake g++ gcc gfortran make python3 python-is-python3 rocfft vim wget
+    rm -rf /var/lib/apt/lists/*
+
+%environment
+    export LD_LIBRARY_PATH=/opt/rocm-6.1.2/lib:$LD_LIBRARY_PATH
+
+# Copying from user local download of NAMD_3.0_Source.tar.gz (requires accepting EULA)
+%files
+    ./NAMD_3.0_Source.tar.gz /opt/uio/NAMD_3.0_Source.tar.gz
+
+# NAMD version 3.0
+%post
+    tar -x -f /opt/uio/NAMD_3.0_Source.tar.gz -C /usr/local -z
+    rm /opt/uio/NAMD_3.0_Source.tar.gz
+
+# Charm version 8.0.0 - single-node multicore version
+%post
+    tar -x -f /usr/local/NAMD_3.0_Source/charm-8.0.0.tar -C /usr/local/NAMD_3.0_Source
+    cd /usr/local/NAMD_3.0_Source/charm-8.0.0 
+    ./build charm++ multicore-linux-x86_64 --with-production
+
+# FFTW with -fPIC and single-precision support
+%post
+    wget -q -nc --no-check-certificate -P /usr/local/NAMD_3.0_Source http://www.fftw.org/fftw-3.3.9.tar.gz 
+    tar -x -f /usr/local/NAMD_3.0_Source/fftw-3.3.9.tar.gz -C /usr/local/NAMD_3.0_Source -z
+    cd /usr/local/NAMD_3.0_Source/fftw-3.3.9 
+    ./configure --enable-float --enable-threads --prefix=/usr/local/NAMD_3.0_Source/fftw CFLAGS="-fPIC" 
+    make -j$(nproc) && make -j$(nproc) install 
+    rm -rf /usr/local/NAMD_3.0_Source/fftw-3.3.9 /usr/local/NAMD_3.0_Source/fftw-3.3.9.tar.gz
+
+# TCL version 8.6.13
+%post
+    wget -q -nc --no-check-certificate -P /usr/local/NAMD_3.0_Source http://www.ks.uiuc.edu/Research/namd/libraries/tcl8.6.13-linux-x86_64.tar.gz 
+    tar -x -f /usr/local/NAMD_3.0_Source/tcl8.6.13-linux-x86_64.tar.gz -C /usr/local/NAMD_3.0_Source -z
+    mv /usr/local/NAMD_3.0_Source/tcl8.6.13-linux-x86_64 /usr/local/NAMD_3.0_Source/tcl 
+    rm /usr/local/NAMD_3.0_Source/tcl8.6.13-linux-x86_64.tar.gz
+    wget -q -nc --no-check-certificate -P /usr/local/NAMD_3.0_Source http://www.ks.uiuc.edu/Research/namd/libraries/tcl8.6.13-linux-x86_64-threaded.tar.gz 
+    tar -x -f /usr/local/NAMD_3.0_Source/tcl8.6.13-linux-x86_64-threaded.tar.gz -C /usr/local/NAMD_3.0_Source -z
+    mv /usr/local/NAMD_3.0_Source/tcl8.6.13-linux-x86_64-threaded /usr/local/NAMD_3.0_Source/tcl-threaded 
+    rm /usr/local/NAMD_3.0_Source/tcl8.6.13-linux-x86_64-threaded.tar.gz
+
+# NAMD - GPU-resident HIP multicore
+%post
+    cd /usr/local/NAMD_3.0_Source
+    ./config Linux-x86_64-g++ --charm-base /usr/local/NAMD_3.0_Source/charm-8.0.0 --charm-arch multicore-linux-x86_64 --with-single-node-hip --rocm-prefix /opt/rocm-6.1.2
+    cd /usr/local/NAMD_3.0_Source/Linux-x86_64-g++ 
+    make -j$(nproc)
+
+%environment
+    export PATH=/usr/local/NAMD_3.0_Source/Linux-x86_64-g++:$PATH
